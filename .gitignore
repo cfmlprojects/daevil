@@ -1,0 +1,12 @@
+/src/test/resources/tmp
+/out
+/dist
+src/main/resources/script/windows/procrun/
+
+.gradle
+
+.idea/
+*.iml
+*.iws
+*.ipr
+

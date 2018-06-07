@@ -1,0 +1,42 @@
+@args (String baseUrl, String prompt)
+@daevil.script.nix.bash.function.md5url_unzip.template()
+JRE_ZIP=${DIR}/jre.zip
+JRE_DIR="${DIR}/jre"
+
+if type -p java  > /dev/null 2>&1; then
+#    echo found java executable in PATH
+    _java=java
+    export $(/usr/bin/env java -XshowSettings:properties -version 2>&1 | grep "java.home" | sed -e 's/java.home/JAVA_HOME/;s/ //g;')
+elif [[ -n "${JAVA_HOME}" ]] && [[ -x "${JAVA_HOME}/bin/java" ]];  then
+#    echo found java executable in JAVA_HOME
+    _java="${JAVA_HOME}/bin/java"
+else
+  if [[ -n "${JRE_DIR}" ]] && [[ -x "${JRE_DIR}/bin/java" ]];  then
+    _java="${JRE_DIR}/bin/java"
+    JAVA_HOME=${JRE_DIR}
+    export JAVA_HOME
+  fi
+fi
+
+if [[ ! "${_java}" ]]; then
+ read -n 1 -r -p "JAVA_HOME not set, and Java not detected in path.  Download a JRE? [Y/n]" response
+ responseLowerCase=${response,,} # tolower
+ if [[ ${responseLowerCase} =~ ^(yes|y| ) ]] | [ -z ${responseLowerCase} ]; then
+      if [ `getconf LONG_BIT` = "64" ]
+        then
+            bittype=64
+        else
+            bittype=32
+      fi
+      os="linux"
+      case "${OSTYPE}" in
+        darwin*)  os="darwin" ;;
+      esac
+      JRE_URL="@baseUrl-${os}${bittype}.zip"
+      ZipUrlWithMd5ToDir ${JRE_URL} ${JRE_ZIP} ${JRE_DIR}
+      _java="${JRE_DIR}/bin/java"
+      JAVA_HOME=${JRE_DIR}
+      export JAVA_HOME
+    fi
+fi
+export javacmd=${JAVA_HOME}/bin/java

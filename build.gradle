@@ -1,0 +1,132 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id "com.fizzed.rocker" version "0.24.0"
+}
+defaultTasks 'clean', 'shadow'
+
+buildDir = file('./dist')
+
+apply plugin: 'java'
+
+group = 'org.cfmlprojects'
+description = 'Daevil Gradle build script'
+archivesBaseName = 'daevil'
+version = '1.0.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+task wrapper(type: Wrapper) { gradleVersion = '4.8' }
+
+configurations {
+    procrun // for downloading
+}
+
+rocker {
+    // Base directory for generated java sources, actual target is sub directory
+    // with the name of the source set. The value is passed through project.file().
+    outputBaseDirectory = "$buildDir/generated-src/rocker"
+    // Base directory for the directory where the hot reload feature
+    // will (re)compile classes to at runtime (and where `rocker-compiler.conf`
+    // is generated, which is used by RockerRuntime.getInstance().setReloading(true)).
+    // The actual target is a sub directory with the name of the source set.
+    // The value is passed through project.file().
+    classBaseDirectory = "$buildDir/classes"
+    failOnError true
+    skipTouch true
+    // must not be empty when skipTouch is equal to false
+    touchFile ""
+    javaVersion '1.8'
+    extendsClass null
+    extendsModelClass null
+    optimize null
+    discardLogicWhitespace true
+    targetCharset null
+    suffixRegex null
+    postProcessing null
+}
+
+sourceSets {
+    main {
+        rocker {
+            srcDir('src/main/rocker')
+        }
+    }
+}
+
+shadowJar {
+    classifier = null
+    mergeServiceFiles()
+    dependencies {
+        exclude(dependency('org.slf4j:slf4j-api'))
+    }
+}
+
+test {
+    // Enable JUnit 5 (Gradle 4.6+).
+    useJUnitPlatform { }
+
+    // Always run tests, even when nothing changed.
+    dependsOn 'cleanTest', 'generateRockerTemplateSource'
+
+    // Show test results.
+    testLogging { events "passed", "skipped", "failed" }
+
+    // show standard out and standard error of the test JVM(s) on the console
+    testLogging.showStandardStreams = true
+}
+testClasses.dependsOn('generateRockerTemplateSource')
+
+
+task provisionProcrun(type: Copy) {
+    ext {
+        destination = file('src/main/resources/script/windows/procrun')
+        fileName = ''
+    }
+    from configurations.procrun
+    doFirst{
+        configurations.procrun.asFileTree.each {
+            println "Extracting ${it} to ${ext.destination}"
+            fileName = it.name
+            from(zipTree(it))
+        }
+        delete ext.destination
+    }
+    into ext.destination
+    doLast {
+        println "Deleting $ext.destination/${ext.fileName}"
+        delete "$ext.destination/${ext.fileName}"
+    }
+}
+//build.dependsOn provisionProcrun
+
+dependencies {
+    compile group: 'org.graylog.repackaged', name: 'os-platform-finder', version: '1.2.3'
+    compile('com.fizzed:rocker-runtime:0.24.0')
+
+    procrun group: 'commons-daemon', name: 'commons-daemon', classifier: 'bin-windows', ext: 'zip', version: '1.1.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+    testCompile group: 'org.junit.platform', name: 'junit-platform-launcher', version: "1.2.0"
+    testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+}
+repositories {
+    jcenter()
+}
+
+apply plugin: 'maven-publish'
+publishing {
+    repositories {
+        maven {
+            url "$buildDir/maven"
+        }
+    }
+    publications {
+        daevil(MavenPublication) { publication ->
+            groupId project.group
+            artifactId 'daevil'
+            version project.version
+            from components.java
+        }
+    }
+}

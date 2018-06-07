@@ -1,0 +1,2 @@
+@args(String zipFile, String unzipToDir)
+7za e "@zipFile" $("-o" + "@unzipToDir")

@@ -1,0 +1,19 @@
+@args(daevil.menu.BatchFileBuilder builder)
+
+:url_file
+    set URLFILE_URL=%~1
+    set URLFILE_FILE=%~2
+    echo "Downloading with powershell: %URLFILE_URL% -> %URLFILE_FILE%"
+    echo.
+    powershell.exe -Noninteractive -NoProfile -command "set-executionpolicy remotesigned; function downloadFile($url, $targetFile) {   \"*****Downloading $url to $targetFile\"; $uri = New-Object \"System.Uri\" $url; $request = [System.Net.HttpWebRequest]::Create($uri); $request.set_Timeout(15000); $response = $request.GetResponse(); $totalLength = [System.Math]::Floor($response.get_ContentLength()/1024); $responseStream = $response.GetResponseStream(); $targetStream = New-Object -TypeName System.IO.FileStream -ArgumentList \"$targetFile\", Create; $buffer = new-object byte[] 10KB; $count = $responseStream.Read($buffer,0,$buffer.length); $downloadedBytes = $count; while ($count -gt 0) { [System.Console]::CursorLeft = 0; [System.Console]::Write(\"Downloaded {0}K of {1}K\", [System.Math]::Floor($downloadedBytes/1024), $totalLength); $targetStream.Write($buffer, 0, $count); $count = $responseStream.Read($buffer,0,$buffer.length); $downloadedBytes = $downloadedBytes + $count; }; $targetStream.Flush();  \"`nFinished Download\"; $targetStream.Close(); $targetStream.Dispose(); $responseStream.Dispose(); }; downloadFile \"%URLFILE_URL%\" \"%URLFILE_FILE%\";"
+::    powershell.exe -Noninteractive -NoProfile -command "function md5hash($path) { $fullPath = Resolve-Path $path; $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider; $file = [System.IO.File]::Open($fullPath,[System.IO.Filemode]::Open, [System.IO.FileAccess]::Read); [System.BitConverter]::ToString($md5.ComputeHash($file)); $file.Dispose() } md5hash \"%URLFILE_FILE%\";"
+::    cmd /c "powershell -version 1.0 -nologo /? 2>&1"
+    if exist "%URLFILE_FILE%" (
+    echo "SUCCESSFUL"
+    exit /B 0
+    ) else (
+    echo "NONSUSSSUCCESSFUL"
+    exit /B 1
+    )
+
+

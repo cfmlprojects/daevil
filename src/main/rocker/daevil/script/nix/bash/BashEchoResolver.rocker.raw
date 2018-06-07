@@ -1,0 +1,13 @@
+@args (String toDir, String prompt, String echo)
+@daevil.script.nix.bash.function.prompt_confirm.template()
+
+if [[ -n "@toDir" ]]; then
+ echo "@toDir does not exist, resolving..."
+ if prompt_confirm "@prompt"; then
+    echo "@echo"
+ else
+    echo "NO"
+ fi
+else
+ echo "@toDir already existed, not downloading!"
+fi

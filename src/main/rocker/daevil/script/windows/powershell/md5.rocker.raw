@@ -1,0 +1,12 @@
+@args(String path, String md5File)
+function md5hash($path) {
+$fullPath = Resolve-Path $path
+$md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+$file = [System.IO.File]::Open($fullPath,[System.IO.Filemode]::Open, [System.IO.FileAccess]::Read)
+$hash = [System.BitConverter]::ToString($md5.ComputeHash($file)).replace('-', '').toLower()
+$file.Dispose()
+$content = [IO.File]::ReadAllText("@md5File")
+if($hash.equals($content)) { $operator = "==" } else { $operator = "MP" }
+Write-Host $hash.equals($content) $hash $operator $content
+}
+md5hash "@path"

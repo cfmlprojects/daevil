@@ -31,7 +31,9 @@ class MenuTest extends AbstractWorkTest {
 
     @Test
     void multiOSMenu() {
+        // tag::docExample[]
         MultiOSMenu menu = new MultiOSMenu("Test Menu");
+
         menu.fileName.set("menu");
 
         menu.addOption("start", "Starts the thing")
@@ -43,9 +45,11 @@ class MenuTest extends AbstractWorkTest {
                 .command(OSType.WINDOWS, "echo stop " + OSType.WINDOWS)
                 .command(OSType.NIX_DARWINISH, "echo stop " + OSType.NIX_DARWINISH)
                 .command(OSType.NIX, "echo stop " + OSType.NIX);
-        Path resourcesTarget = Paths.get(workDir.toString() + "/multiosmenu");
-        menu.generate(resourcesTarget).forEach(Daevil.log::info);
 
+        Path resourcesTarget = Paths.get(workDir.toString() + "/multiosmenu");
+
+        menu.generate(resourcesTarget).forEach(Daevil.log::info);
+        // end::docExample[]
     }
 
     @Test

@@ -1,7 +1,11 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.4'
     id "com.fizzed.rocker" version "0.24.0"
+    id "org.asciidoctor.convert" version "1.5.7"
+    id "org.ajoberstar.grgit" version "2.2.1"
+    id "org.ajoberstar.git-publish" version "1.0.1-rc.2"
 }
+
 defaultTasks 'clean', 'shadow'
 
 buildDir = file('./dist')
@@ -63,7 +67,7 @@ shadowJar {
 
 test {
     // Enable JUnit 5 (Gradle 4.6+).
-    useJUnitPlatform { }
+    useJUnitPlatform {}
 
     // Always run tests, even when nothing changed.
     dependsOn 'cleanTest', 'generateRockerTemplateSource'
@@ -83,7 +87,7 @@ task provisionProcrun(type: Copy) {
         fileName = ''
     }
     from configurations.procrun
-    doFirst{
+    doFirst {
         configurations.procrun.asFileTree.each {
             println "Extracting ${it} to ${ext.destination}"
             fileName = it.name
@@ -110,9 +114,121 @@ dependencies {
     testCompile group: 'org.junit.platform', name: 'junit-platform-launcher', version: "1.2.0"
     testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
 }
+
 repositories {
     jcenter()
 }
+
+task setupDocinfo() {
+    ext {
+        docinfodir = file(rootProject.buildDir.path + '/docinfo')
+    }
+    doFirst {
+        docinfodir.mkdirs()
+//        def css = 'https://raw.githubusercontent.com/darshandsoni/asciidoctor-skins/gh-pages/css/boot-superhero.css'.toURL().text
+        def css = 'https://raw.githubusercontent.com/spring-projects/spring-framework/master/src/docs/asciidoc/stylesheets/asciidoctor-spring.css'.toURL().text
+//        css += 'https://raw.githubusercontent.com/spring-projects/spring-framework/master/src/docs/asciidoc/stylesheets/main.css'.toURL().text
+        file(docinfodir.path + "/docinfo.html").text = """
+            <style>
+              ${css}
+#toc.toc2{overflow-y:hidden}
+              .toc{overflow-y:auto}.toc>.toc-list{overflow:hidden;position:relative}.toc>.toc-list li{list-style:none}.toc-list{margin:0;padding-left:10px}a.toc-link{color:currentColor;height:100%}.is-collapsible{max-height:1000px;overflow:hidden;transition:all 300ms ease-in-out}.is-collapsed{max-height:0}.is-position-fixed{position:fixed !important;top:0}.is-active-link{font-weight:700}.toc-link::before{background-color:#EEE;content:' ';display:inline-block;height:inherit;left:0;margin-top:-1px;position:absolute;width:2px}.is-active-link::before{background-color:#54BC4B}
+            </style>
+            """.stripIndent()
+        file(docinfodir.path + "/docinfo-footer.html").text = '''
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.1.1/tocbot.min.js"></script>
+            <script>
+              var oldtoc = document.getElementById('toctitle').nextElementSibling;
+              var newtoc = document.createElement('div');
+              newtoc.setAttribute('id', 'tocbot');
+              newtoc.setAttribute('class', 'js-toc');
+              oldtoc.parentNode.replaceChild(newtoc, oldtoc);
+              tocbot.init({ contentSelector: '#content',
+                headingSelector: 'h1, h2, h3, h4',
+                smoothScroll: false });
+              var handleTocOnResize = function() {
+                var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+                if (width < 768) {
+                  tocbot.refresh({ contentSelector: '#content',
+                    headingSelector: 'h1, h2, h3, h4',
+                    collapseDepth: 6,
+                    activeLinkClass: 'ignoreactive',
+                    throttleTimeout: 1000,
+                    smoothScroll: false });
+                }
+                else {
+                  tocbot.refresh({ contentSelector: '#content',
+                    headingSelector: 'h1, h2, h3, h4',
+                    smoothScroll: false });
+                }
+              };
+              window.addEventListener('resize', handleTocOnResize);
+              handleTocOnResize();
+            </script>
+            '''.stripIndent()
+    }
+}
+
+asciidoctor {
+    dependsOn setupDocinfo
+    outputDir = file(rootProject.buildDir.path + '/docs')
+    sourceDir = file('.')
+    sources {
+        include 'README.adoc'
+    }
+    attributes 'source-highlighter': 'coderay', docinfo1: '', docinfodir: setupDocinfo.docinfodir.path
+}
+
+task docs() {
+    description = 'Convert asciidoc to html'
+    outputs.dir(asciidoctor.outputDir)
+    dependsOn asciidoctor
+    doLast {
+        def readmeFile = file("${asciidoctor.outputDir.path}/html5/README.html")
+        println "docbook: " + readmeFile
+    }
+}
+
+task docsView() {
+    description = 'Convert asciidoc to html and open with the browser'
+    dependsOn docs
+    doLast {
+        def readmeFile = file("${asciidoctor.outputDir.path}/html5/README.html")
+        println "Opening browser to file://" + readmeFile
+        project.exec {
+            commandLine "xdg-open", readmeFile.toURI()
+        }
+    }
+
+}
+
+gitPublish {
+    branch = 'gh-pages'
+    commitMessage = 'Publishing docs'
+    contents {
+        from("${asciidoctor.outputDir.path}/html5/") {
+            eachFile {
+                println "Adding ${it} to the gh-pages branch"
+            }
+            into "."
+            rename 'README.html', 'index.html'
+        }
+    }
+}
+
+task docsPublishPush() {
+    dependsOn gitPublishPush
+    mustRunAfter docs
+    doFirst {
+        println "Git commit+push: ${gitPublish.commitMessage.get()}"
+    }
+}
+
+task docsPublish() {
+    dependsOn docs, docsPublishPush
+}
+
+
 
 apply plugin: 'maven-publish'
 publishing {

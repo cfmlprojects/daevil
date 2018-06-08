@@ -1284,20 +1284,23 @@ whatnot, as services versus applications, per se, is what this is for.</p>
 <h3 id="_example">Example</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">        MultiOSMenu menu = <span class="keyword">new</span> MultiOSMenu(<span class="string"><span class="delimiter">&quot;</span><span class="content">Test Menu</span><span class="delimiter">&quot;</span></span>);
-        menu.fileName.set(<span class="string"><span class="delimiter">&quot;</span><span class="content">menu</span><span class="delimiter">&quot;</span></span>);
+<pre class="CodeRay highlight"><code data-lang="java">MultiOSMenu menu = <span class="keyword">new</span> MultiOSMenu(<span class="string"><span class="delimiter">&quot;</span><span class="content">Test Menu</span><span class="delimiter">&quot;</span></span>);
 
-        menu.addOption(<span class="string"><span class="delimiter">&quot;</span><span class="content">start</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Starts the thing</span><span class="delimiter">&quot;</span></span>)
-                .command(OSType.WINDOWS, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo start </span><span class="delimiter">&quot;</span></span> + OSType.WINDOWS)
-                .command(OSType.NIX_DARWINISH, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo start </span><span class="delimiter">&quot;</span></span> + OSType.NIX_DARWINISH)
-                .command(OSType.NIX, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo start </span><span class="delimiter">&quot;</span></span> + OSType.NIX);
+menu.fileName.set(<span class="string"><span class="delimiter">&quot;</span><span class="content">menu</span><span class="delimiter">&quot;</span></span>);
 
-        menu.addOption(<span class="string"><span class="delimiter">&quot;</span><span class="content">stop</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Stops the thing</span><span class="delimiter">&quot;</span></span>)
-                .command(OSType.WINDOWS, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo stop </span><span class="delimiter">&quot;</span></span> + OSType.WINDOWS)
-                .command(OSType.NIX_DARWINISH, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo stop </span><span class="delimiter">&quot;</span></span> + OSType.NIX_DARWINISH)
-                .command(OSType.NIX, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo stop </span><span class="delimiter">&quot;</span></span> + OSType.NIX);
-        Path resourcesTarget = Paths.get(workDir.toString() + <span class="string"><span class="delimiter">&quot;</span><span class="content">/multiosmenu</span><span class="delimiter">&quot;</span></span>);
-        menu.generate(resourcesTarget).forEach(Daevil.log::info);</code></pre>
+menu.addOption(<span class="string"><span class="delimiter">&quot;</span><span class="content">start</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Starts the thing</span><span class="delimiter">&quot;</span></span>)
+        .command(OSType.WINDOWS, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo start </span><span class="delimiter">&quot;</span></span> + OSType.WINDOWS)
+        .command(OSType.NIX_DARWINISH, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo start </span><span class="delimiter">&quot;</span></span> + OSType.NIX_DARWINISH)
+        .command(OSType.NIX, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo start </span><span class="delimiter">&quot;</span></span> + OSType.NIX);
+
+menu.addOption(<span class="string"><span class="delimiter">&quot;</span><span class="content">stop</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Stops the thing</span><span class="delimiter">&quot;</span></span>)
+        .command(OSType.WINDOWS, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo stop </span><span class="delimiter">&quot;</span></span> + OSType.WINDOWS)
+        .command(OSType.NIX_DARWINISH, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo stop </span><span class="delimiter">&quot;</span></span> + OSType.NIX_DARWINISH)
+        .command(OSType.NIX, <span class="string"><span class="delimiter">&quot;</span><span class="content">echo stop </span><span class="delimiter">&quot;</span></span> + OSType.NIX);
+
+Path resourcesTarget = Paths.get(workDir.toString() + <span class="string"><span class="delimiter">&quot;</span><span class="content">/multiosmenu</span><span class="delimiter">&quot;</span></span>);
+
+menu.generate(resourcesTarget).forEach(Daevil.log::info);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1327,7 +1330,7 @@ you can only run all the tests on *nix systems at the moment.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-08 00:14:18 MDT
+Last updated 2018-06-08 00:19:24 MDT
 </div>
 </div>
 

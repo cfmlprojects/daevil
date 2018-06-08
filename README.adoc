@@ -1,0 +1,61 @@
+= Daevil
+:author: Author
+:email: valliantster@gmail.com
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:toc: right
+:toc-placement!:
+endif::[]
+ifndef::env-github[]
+:toc: left
+endif::[]
+
+This is just a little deal to generate scripts for installing things as daemons in *nix and Windows.
+
+ifndef::env-github[]
+toc::[]
+endif::[]
+
+== Usage
+
+I wouldn't.
+
+If you're brave, go for it, but "highly volatile" probably sums it up.
+
+Basically you create a menu, and add Unix/Windows commands for the menu options, one for `start` and one for `stop`,
+and then whatever else you want (it does a plain old text menu if called without arguments), and the daemon script
+that Daevil generates and hooks into the system calls the appropriate option at the appropriate time.
+
+== Features
+
+The "features" are that it has resolvers that use md5 hashes to download things upon first run.  Basically a most
+generic bootstrapper, using very simple and highly available bash or cmd.exe/powershell v1 commands.
+
+Also it creates users.  Yeah.  The script that's generated, called `install.bat` or `install.sh`, will also optionally
+create (and remove, in remove.sh/bat) a user for the daemon.
+
+So, real generic downloader/verifier and service installer/remover for *nix and Windows apps wanting to run at boot and
+whatnot, as services versus applications, per se, is what this is for.
+
+== Example
+
+```java
+MultiOSMenu menu = new MultiOSMenu("My Awesome App");
+menu.fileName.set("menu");
+
+menu.addOption("start", "Starts the thing")
+        .command(OSType.WINDOWS, "echo start " + OSType.WINDOWS)
+        .command(OSType.NIX_DARWINISH, "echo start " + OSType.NIX_DARWINISH)
+        .command(OSType.NIX, "echo start " + OSType.NIX);
+
+menu.addOption("stop", "Stops the thing")
+        .command(OSType.WINDOWS, "echo stop " + OSType.WINDOWS)
+        .command(OSType.NIX_DARWINISH, "echo stop " + OSType.NIX_DARWINISH)
+        .command(OSType.NIX, "echo stop " + OSType.NIX);
+```
+
+Something like that, though it'll Shirley change.

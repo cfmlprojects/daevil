@@ -125,11 +125,7 @@ public class Daevil {
                 .command(OSType.NIX, "\"$SCRIPT_DIR/bin/daemon/\"remove");
     }
 
-    public MenuOption startOption(String name, String description) {
-        return controlScript.addOption(name, description);
-    }
-
-    public MenuOption stopOption(String name, String description) {
+    public MenuOption addOption(String name, String description) {
         return controlScript.addOption(name, description);
     }
 

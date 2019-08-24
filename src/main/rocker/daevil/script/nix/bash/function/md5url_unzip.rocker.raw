@@ -1,6 +1,6 @@
 @args ()
 @md5url_file.template()
-function md5url_unzip {
+md5url_unzip {
     zipURL=$1
     zipFile=$2
     destDir=$3

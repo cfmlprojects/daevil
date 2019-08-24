@@ -10,7 +10,7 @@ if [ "${HTTP_CLIENT}" = "" ]; then
     fi
 fi
 
-function url_file() {
+url_file() {
     sourceURL=$1
     destFile=$2
     echo "Getting ${sourceURL} to ${destFile}..."

@@ -19,14 +19,30 @@ public class BashMenu extends Menu {
         String usage = usageString("usage: $(basename $0) [", "|");
 
         final StringBuilder menuText = new StringBuilder();
-        menuText.append("#!/bin/bash\n" +
-                "export SCRIPT_DIR=\"$( cd \"$( dirname \"${BASH_SOURCE[0]}\" )\" && pwd )\"" + '\n'
+        menuText.append("#!/usr/bin/env sh\n" +
+                "# Resolve links: $0 may be a link\n" +
+                "PRG=\"$0\"\n" +
+                "# Need this for relative symlinks.\n" +
+                "while [ -h \"$PRG\" ]; do\n" +
+                "\tls=$(ls -ld \"$PRG\")\n" +
+                "\tlink=$(expr \"$ls\" : '.*-> \\(.*\\)$')\n" +
+                "\tif expr \"$link\" : '/.*' >/dev/null; then\n" +
+                "\t\tPRG=\"$link\"\n" +
+                "\telse\n" +
+                "\t\tPRG=$(dirname \"$PRG\")\"/$link\"\n" +
+                "\tfi\n" +
+                "done\n" +
+                "SAVED=\"$(pwd)\"\n" +
+                "cd \"$(dirname \"$PRG\")/\" || exit 1\n" +
+                "SCRIPT_DIR=\"$(pwd -P)\"\n" +
+                "PROJECT_ROOT=\"$( cd \"$SCRIPT_DIR\" && pwd )\"\n" +
+                "cd \"$SAVED\" || exit 1\n"
                 + "export EXIT_CODE=0" + '\n');
 
         menuText.append(generateResolverText(OSType.NIX));
 
         _options.forEach(option -> {
-            menuText.append("function " + safeName(option.name.get()) + "() {" + '\n');
+            menuText.append(safeName(option.name.get()) + "() {" + '\n');
             menuText.append("    " + option.commandLines(OSType.NIX) + " \"$@\"" + '\n');
             menuText.append("    export EXIT_CODE=$?" + '\n');
             menuText.append("}" + '\n');

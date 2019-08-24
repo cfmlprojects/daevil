@@ -1,6 +1,6 @@
 @args ()
 @url_file.template()
-function md5_for() {
+md5_for() {
   if builtin command -v md5 > /dev/null; then
     md5 -q $1
   elif builtin command -v md5sum > /dev/null ; then
@@ -11,7 +11,7 @@ function md5_for() {
   fi
 }
 
-function md5url_file() {
+md5url_file() {
     zipURL=$1
     zipFile=$2
     url_file "${zipURL}" "${zipFile}"

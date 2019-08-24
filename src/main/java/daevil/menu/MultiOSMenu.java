@@ -60,6 +60,9 @@ public class MultiOSMenu extends Menu {
                 menu = new BatchFileMenu(title.get(), _options).resolvers(resolvers);
             }
         }
+        if(superType == OSType.WINDOWS && !fileName.get().toLowerCase().endsWith(".bat")){
+            fileName.set(fileName.get() + ".bat");
+        }
         menu.title(title.get()).options(_options).resolvers(resolvers).fileName.set(fileName.get());
         menus.put(superType, menu);
         return menu;
@@ -69,15 +72,9 @@ public class MultiOSMenu extends Menu {
         if (!toDirectory.toFile().exists()) {
             toDirectory.toFile().mkdir();
         }
-        String ext;
-        if (osType.typeOf(OSType.NIX)) {
-            ext = "";
-        } else {
-            ext = ".bat";
-        }
-        Path filePath = Paths.get(toDirectory.toString(), fileName.get() + ext);
+        Path filePath = Paths.get(toDirectory.toString(), fileName.get());
         try {
-            Daevil.log.info("Generating " + filePath);
+            Daevil.log.info("Generating " + osType + ":" + filePath);
             Files.write(filePath, generate(osType).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,13 +98,7 @@ public class MultiOSMenu extends Menu {
 
     public OSType.ProcessResult execute(Path path, OSType osType, String... input) {
         generate(osType, path);
-        String scriptPath;
-        if (osType == OSType.WINDOWS) {
-            scriptPath = fileName + ".bat";
-        } else {
-            scriptPath = fileName.get();
-        }
-        path = Paths.get(path.toAbsolutePath().toString(), scriptPath);
+        path = Paths.get(path.toAbsolutePath().toString(), fileName.get());
         Daevil.log.debug("Executing: " + path);
         return osType.execute(path.toString(), null, Arrays.asList(input), 10, false);
     }

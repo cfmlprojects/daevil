@@ -5,8 +5,10 @@ import daevil.menu.BatchFileBuilder;
 import daevil.menu.dependency.Resolver;
 import daevil.script.nix.bash.Md5UrlUnzipResolver;
 import daevil.script.windows.batch.BatMd5UrlUnzipResolver;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,15 +16,15 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ResolverMd5ConfirmationTest extends AbstractWorkTest {
 
     private Daevil daeviler;
     private Path resourcesTarget;
 
 
-    @BeforeEach
-    void beforeEach() {
+    @BeforeAll
+    void generateScripts() {
         final String url = "http://repo1.maven.org/maven2/com/fizzed/rocker-runtime/0.24.0/rocker-runtime-0.24.0-sources.jar";
         resourcesTarget = Paths.get(workDir.toString() + "/resolver");
         daeviler = new Daevil();
@@ -44,6 +46,7 @@ class ResolverMd5ConfirmationTest extends AbstractWorkTest {
         daeviler.dest.set(Paths.get("."));
         daeviler.controlScript().generate(OSType.WINDOWS, resourcesTarget);
         daeviler.controlScript().generate(OSType.NIX, resourcesTarget);
+
 
     }
 

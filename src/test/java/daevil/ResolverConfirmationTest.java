@@ -1,16 +1,19 @@
 package daevil;
 
 
+import com.google.common.collect.ImmutableMap;
 import daevil.menu.BatchFileBuilder;
 import daevil.menu.dependency.Resolver;
-import daevil.script.nix.bash.BashEchoResolver;
-import daevil.script.windows.batch.BatEchoResolver;
+import daevil.term.ProcessResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
+import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -21,16 +24,25 @@ class ResolverConfirmationTest extends AbstractWorkTest {
 
     @BeforeEach
     void beforeEach() {
-        resourcesTarget = Paths.get(workDir.toString() + "/resolver");
+        resourcesTarget = Paths.get(workDir + "/resolver");
         daeviler = new Daevil();
         BatchFileBuilder batBuilder = daeviler.controlScript().batchFileBuilder();
         daeviler.controlScript().resolver(new Resolver(daeviler.controlScript()) {
             @Override
             public String generate(OSType osType) {
                 if (osType.typeOf(OSType.WINDOWS)) {
-                    return BatEchoResolver.template(batBuilder, resourcesTarget.toAbsolutePath().toString() + "/dl", "Download?", "Ok dude, downloading...").render().toString();
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("builder", batBuilder);
+                    map.put("toDir", resourcesTarget.toAbsolutePath() + "/dl");
+                    map.put("prompt", "Download?");
+                    map.put("echo", "Ok dude, downloading...");
+                    return Daevil.render("daevil/script/windows/batch/BatEchoResolver", map);
                 } else {
-                    return BashEchoResolver.template(resourcesTarget.toAbsolutePath().toString() + "/dl", "Download?", "Ok dude, downloading...").render().toString();
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("toDir", resourcesTarget.toAbsolutePath() + "/dl");
+                    map.put("prompt", "Download?");
+                    map.put("echo", "Ok lady, downloading...");
+                    return Daevil.render("daevil/script/nix/bash/BashEchoResolver", map);
                 }
             }
         });
@@ -38,9 +50,18 @@ class ResolverConfirmationTest extends AbstractWorkTest {
             @Override
             public String generate(OSType osType) {
                 if (osType.typeOf(OSType.WINDOWS)) {
-                    return BatEchoResolver.template(batBuilder, resourcesTarget.toAbsolutePath().toString() + "/dl2", "Download 2?", "Ok lady, downloading...").render().toString();
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("builder", batBuilder);
+                    map.put("toDir", resourcesTarget.toAbsolutePath() + "/dl2");
+                    map.put("prompt", "Download2?");
+                    map.put("echo", "Ok lady, downloading...");
+                    return Daevil.render("daevil/script/windows/batch/BatEchoResolver", map);
                 } else {
-                    return BashEchoResolver.template(resourcesTarget.toAbsolutePath().toString() + "/dl2", "Download 2?", "Ok lady, downloading...").render().toString();
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("toDir", resourcesTarget.toAbsolutePath() + "/dl2");
+                    map.put("prompt", "Download2?");
+                    map.put("echo", "Ok dude, downloading...");
+                    return Daevil.render("daevil/script/nix/bash/BashEchoResolver", map);
                 }
             }
         });
@@ -53,23 +74,37 @@ class ResolverConfirmationTest extends AbstractWorkTest {
 
     @Test
     void echoResolverNix() {
-        OSType.ProcessResult processResult = daeviler.controlScript().execute(resourcesTarget,
-                "y", "y", "0", "\n"
-        );
+        ProcessResult processResult;
+        Map<String, String> input;
+        input = ImmutableMap.ofEntries(entry("download? [y/n]:", "y"), entry("Download2? [y/n]:", "y"), entry("Option number:", "0"));
+        processResult = daeviler.controlScript().execute(resourcesTarget, input);
         assertTrue(processResult.output.get().contains("Ok dude"));
         assertTrue(processResult.output.get().contains("Ok lady"));
 
-        processResult = daeviler.controlScript().execute(resourcesTarget,
-                "n", "n", "0", "\n"
-        );
+        input = ImmutableMap.ofEntries(entry("download? [y/n]:", "n"),entry("Download2? [y/n]:", "n"), entry("Option number:", "0"));
+        processResult = daeviler.controlScript().execute(resourcesTarget, input);
         assertTrue(processResult.output.get().contains("NO"));
     }
 
     @Test
     void echoResolverWindows() {
-        OSType.ProcessResult processResult = daeviler.controlScript().execute(resourcesTarget, OSType.WINDOWS, "N", "N", "0", "0");
+        ProcessResult processResult;
+        Map<String, String> input;
+        input = ImmutableMap.ofEntries(
+                entry("Download? [y/n]:", "n"),
+                entry("Download2? [y/n]:", "n"),
+                entry("Option number:", "0")
+        );
+
+        processResult = daeviler.controlScript().execute(resourcesTarget, input);
         assertTrue(processResult.output.get().contains("NO download for you"));
-        processResult = daeviler.controlScript().execute(resourcesTarget, OSType.WINDOWS, "Y", "Y", "0", "0");
+
+        input = ImmutableMap.ofEntries(
+                entry("Download? [y/n]:", "y"),
+                entry("Download2? [y/n]:", "y"),
+                entry("Option number:", "0")
+        );
+        processResult = daeviler.controlScript().execute(resourcesTarget, input);
         assertTrue(processResult.output.get().contains("Ok dude"), processResult.output.get());
         assertTrue(processResult.output.get().contains("Ok lady"));
     }

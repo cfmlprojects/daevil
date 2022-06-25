@@ -6,13 +6,20 @@ import daevil.menu.MenuOption;
 import daevil.menu.MultiOSMenu;
 import daevil.menu.dependency.JavaResolver;
 import daevil.property.Property;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.TemplateOutput;
+import gg.jte.output.StringOutput;
+import net.gradleutil.gen.Generator;
 import org.jsoftbiz.utils.OS;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.*;
 
 import static daevil.property.Property.get;
@@ -200,6 +207,27 @@ public class Daevil {
         } else {
             log.info("No image for windows service file.");
         }
+    }
+
+    static Path getJarPath() {
+        try {
+            return Paths.get(Daevil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String render(String scriptPath, Map<String,Object> args){
+        TemplateEngine engine = TemplateEngine.createPrecompiled(getJarPath(), ContentType.Plain, Daevil.class.getClassLoader(), "daevil");
+        TemplateOutput out = new StringOutput();
+        engine.render(scriptPath, args, out);
+        return out.toString();
+    }
+    public static String render(String scriptPath, Object... args){
+        TemplateEngine engine = TemplateEngine.createPrecompiled(getJarPath(), ContentType.Plain, Daevil.class.getClassLoader(), "daevil");
+        TemplateOutput out = new StringOutput();
+        engine.render(scriptPath, args, out);
+        return out.toString();
     }
 
     interface IOConsumer<T> {

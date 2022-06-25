@@ -2,17 +2,12 @@ package daevil;
 
 import daevil.menu.MenuOption;
 import daevil.menu.MultiOSMenu;
-import org.junit.jupiter.api.BeforeAll;
+import daevil.term.ProcessResult;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,7 +58,7 @@ class MenuOptionTest extends AbstractWorkTest {
 
             executions.incrementAndGet();
             System.out.println("INCRMENTING" + executions.get());
-        List<OSType.ProcessResult> results = menuOption.execute(OSType.host(), false);
+        List<ProcessResult> results = menuOption.execute(OSType.host(), false);
         results.forEach(stringMapMap -> System.out.println(stringMapMap.toString()));
         assertEquals(3, results.size());
         assertNotEquals(0, results.get(1).exitCode);

@@ -2,14 +2,10 @@ package daevil.menu;
 
 import daevil.Daevil;
 import daevil.OSType;
-import daevil.ResourceUtil;
 import daevil.property.Property;
+import daevil.term.ProcessResult;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static daevil.property.Property.get;
 
@@ -89,13 +85,13 @@ public class MenuOption {
         return this;
     }
 
-    public List<OSType.ProcessResult> execute(OSType osType, boolean haltOnFailure) {
+    public List<ProcessResult> execute(OSType osType, boolean haltOnFailure) {
         return execute(osType, 120, haltOnFailure);
     }
 
-    public List<OSType.ProcessResult> execute(OSType osType, int timeoutSeconds, boolean haltOnFailure) {
+    public List<ProcessResult> execute(OSType osType, int timeoutSeconds, boolean haltOnFailure) {
         final List<String> commands = commandsish(osType);
-        final List<OSType.ProcessResult> results = new ArrayList<>();
+        final List<ProcessResult> results = new ArrayList<>();
         if (commands.size() == 0) {
             Daevil.log.error("No commands to run for osType: " + osType);
         }

@@ -1,11 +1,11 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "org.asciidoctor.convert" version "1.5.7"
-    id "org.ajoberstar.grgit" version "2.2.1"
-    id "org.ajoberstar.git-publish" version "1.0.1"
-    id "com.fizzed.rocker" version '1.2.1'
+    id "org.ajoberstar.grgit" version "5.0.0"
+    id "org.ajoberstar.git-publish" version "3.0.0"
+    id('net.gradleutil.gradle-conf') version('1.1.9-SNAPSHOT')
 }
-def rockerVersion = '1.2.1'
+def confGenVersion = '1.1.9-SNAPSHOT'
 
 defaultTasks 'clean', 'shadow'
 
@@ -16,52 +16,37 @@ apply plugin: 'java'
 group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.1-SNAPSHOT'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 configurations {
     procrun // for downloading
 }
 
-rocker {
-    // Base directory for generated java sources, actual target is sub directory
-    // with the name of the source set. The value is passed through project.file().
-    outputBaseDirectory = "$buildDir/generated-src/rocker"
-    // Base directory for the directory where the hot reload feature
-    // will (re)compile classes to at runtime (and where `rocker-compiler.conf`
-    // is generated, which is used by RockerRuntime.getInstance().setReloading(true)).
-    // The actual target is a sub directory with the name of the source set.
-    // The value is passed through project.file().
-    classBaseDirectory = "$buildDir/classes"
-    failOnError true
-    skipTouch true
-    // must not be empty when skipTouch is equal to false
-    touchFile ""
-    javaVersion '1.8'
-    extendsClass null
-    extendsModelClass null
-    optimize null
-    discardLogicWhitespace true
-    targetCharset null
-    suffixRegex null
-    postProcessing null
-}
 
-sourceSets {
-    main {
-        rocker {
-            srcDir('src/main/rocker')
-        }
+def jteDir = layout.buildDirectory.dir('jteFiles')
+
+tasks.getByName('compileJava').configure {
+    sourceSets.main.java.srcDirs += jteDir
+    doFirst{
+        net.gradleutil.gen.Generator.generate(file('src/main/jte').toPath(), jteDir.get().asFile.toPath(),
+                net.gradleutil.gen.Generator.defaultOptions().packageName('daevil'))
     }
 }
 
 shadowJar {
-    classifier = null
+    archiveClassifier.set null
     mergeServiceFiles()
     dependencies {
         exclude(dependency('org.slf4j:slf4j-api'))
+    }
+    minimize()
+    doLast {
+        def jarFile = outputs.files.first() as File
+        def formatStr = "%,10.2f"
+        logger.lifecycle("Shadow jar:" + jarFile + "${String.format(formatStr, jarFile.length() / 1024)} Mb")
     }
 }
 
@@ -70,7 +55,7 @@ test {
     useJUnitPlatform {}
 
     // Always run tests, even when nothing changed.
-    dependsOn 'cleanTest', 'generateRockerTemplateSource'
+    dependsOn 'cleanTest'
 
     // Show test results.
     testLogging { events "passed", "skipped", "failed" }
@@ -78,7 +63,6 @@ test {
     // show standard out and standard error of the test JVM(s) on the console
     testLogging.showStandardStreams = true
 }
-testClasses.dependsOn('generateRockerTemplateSource')
 
 
 task provisionProcrun(type: Copy) {
@@ -104,19 +88,27 @@ task provisionProcrun(type: Copy) {
 //build.dependsOn provisionProcrun
 
 dependencies {
-    compile group: 'org.graylog.repackaged', name: 'os-platform-finder', version: '1.2.3'
-    compile('com.fizzed:rocker-runtime:' + rockerVersion)
+    implementation group: 'org.graylog.repackaged', name: 'os-platform-finder', version: '1.2.3'
+    implementation('net.gradleutil:conf-gen:' + confGenVersion)
 
     procrun group: 'commons-daemon', name: 'commons-daemon', classifier: 'bin-windows', ext: 'zip', version: '1.1.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
-    testCompile group: 'org.junit.platform', name: 'junit-platform-launcher', version: "1.2.0"
-    testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: "1.2.0"
+    testImplementation('org.junit.jupiter:junit-jupiter-params:5.8.2')
+
+    implementation 'com.google.guava:guava:31.1-jre'
+
+    implementation 'org.jetbrains.pty4j:pty4j:0.12.7'
+    implementation 'net.java.dev.jna:jna:5.11.0'
+    implementation 'net.java.dev.jna:jna-platform:5.11.0'
+
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
+    mavenLocal()
 }
 
 task setupDocinfo() {

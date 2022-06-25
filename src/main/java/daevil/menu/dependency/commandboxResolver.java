@@ -1,8 +1,11 @@
 package daevil.menu.dependency;
 
+import daevil.Daevil;
 import daevil.OSType;
 import daevil.menu.Menu;
 import daevil.property.Property;
+
+import java.util.HashMap;
 
 import static daevil.property.Property.get;
 
@@ -28,9 +31,15 @@ public class commandboxResolver extends Resolver {
     @Override
     public String generate(OSType osType) {
         if(OSType.NIX.typeOf(osType)){
-            return daevil.script.nix.bash.JavaResolver.template(urlPrefix.get(), prompt.get()).render().toString();
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("urlPrefix", urlPrefix.get());
+            map.put("prompt", prompt.get());
+            return Daevil.render("daevil/script/nix/bash/JavaResolver", map);
         } else if(OSType.WINDOWS.typeOf(osType)){
-            return daevil.script.windows.batch.JavaResolver.template(menu.batchFileBuilder(), urlPrefix.get(), prompt.get()).render().toString();
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("urlPrefix", urlPrefix.get());
+            map.put("prompt", prompt.get());
+            return Daevil.render("daevil/script/windows/batch/JavaResolver", map);
         } else {
             throw new IllegalArgumentException("Don't know how to handle osType of " + osType);
         }

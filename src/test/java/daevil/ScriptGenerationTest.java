@@ -48,7 +48,7 @@ class ScriptGenerationTest extends AbstractWorkTest {
         daevil.dest.set(Paths.get("."));
         daevil.generateScripts(OSType.NIX, resourcesTarget);
         try (Stream<String> stream = Files.lines(Paths.get(resourcesTarget.toString() + "/service-ctl"))) {
-            assertTrue(stream.anyMatch(line -> line.contains("JRE")));
+            assertTrue(stream.anyMatch(line -> line.contains("JVM")), "JVM string not found in output");
         } catch (IOException e) {
             e.printStackTrace();
             fail(e.getMessage());

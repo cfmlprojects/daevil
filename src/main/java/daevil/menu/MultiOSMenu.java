@@ -3,6 +3,7 @@ package daevil.menu;
 import daevil.Daevil;
 import daevil.OSType;
 import daevil.ResourceUtil;
+import daevil.term.ProcessResult;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -92,15 +93,15 @@ public class MultiOSMenu extends Menu {
         return paths;
     }
 
-    public OSType.ProcessResult execute(Path path, String... input) {
+    public ProcessResult execute(Path path, Map<String,String>input) {
         return execute(path, OSType.host(), input);
     }
 
-    public OSType.ProcessResult execute(Path path, OSType osType, String... input) {
+    public ProcessResult execute(Path path, OSType osType, Map<String,String> input) {
         generate(osType, path);
         path = Paths.get(path.toAbsolutePath().toString(), fileName.get());
         Daevil.log.debug("Executing: " + path);
-        return osType.execute(path.toString(), null, Arrays.asList(input), 10, false);
+        return osType.execute(path.toString(), null, input, 10, false);
     }
 
     /**
@@ -110,7 +111,7 @@ public class MultiOSMenu extends Menu {
      * @param osType
      * @return
      */
-    public OSType.ProcessResult executeResolvers(Path path, OSType osType) {
+    public ProcessResult executeResolvers(Path path, OSType osType) {
         try {
             Daevil.log.info("Generating resolver script: " + path);
             Files.write(path, generateResolverText(osType).getBytes());

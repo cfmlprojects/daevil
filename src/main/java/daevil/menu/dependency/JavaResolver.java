@@ -1,8 +1,14 @@
 package daevil.menu.dependency;
 
+import daevil.Daevil;
 import daevil.OSType;
+import daevil.menu.BatchFileBuilder;
 import daevil.menu.Menu;
 import daevil.property.Property;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static daevil.property.Property.get;
 
@@ -41,10 +47,18 @@ public class JavaResolver extends Resolver {
     }
 
     public String generateNix() {
-        return daevil.script.nix.bash.JavaResolver.template(urlPrefix.get(), prompt.get()).render().toString();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("urlPrefix", urlPrefix.get());
+        map.put("prompt", prompt.get());
+        return Daevil.render("daevil/script/nix/bash/JavaResolver", map);
     }
 
     private String generateWindows() {
-        return daevil.script.windows.batch.JavaResolver.template(menu.batchFileBuilder(), urlPrefix.get(), prompt.get()).render().toString();
+        BatchFileBuilder builder = new Daevil().controlScript().batchFileBuilder();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("builder", builder);
+        map.put("urlPrefix", urlPrefix.get());
+        map.put("prompt", prompt.get());
+        return Daevil.render("daevil/script/windows/batch/JavaResolver", map);
     }
 }

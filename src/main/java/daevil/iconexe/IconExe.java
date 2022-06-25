@@ -582,7 +582,7 @@ public class IconExe {
         return true;
     }
 
-    static void copyFile(String src, String dst) throws FileNotFoundException, IOException {
+    public static void copyFile(String src, String dst) throws FileNotFoundException, IOException {
         File srcFile = new File(src);
         File dstFile = new File(dst);
         InputStream in = new BufferedInputStream(new FileInputStream(srcFile));

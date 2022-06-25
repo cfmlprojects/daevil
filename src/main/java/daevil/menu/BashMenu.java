@@ -69,7 +69,9 @@ public class BashMenu extends Menu {
         });
 
         menuText.append("echo" + '\n');
-        menuText.append("read -p \"Option number: \" answer" + '\n');
+        menuText.append("echo \"Option number: \"" + '\n');
+        menuText.append("IFS='' read -r answer" + '\n');
+
         menuText.append("  case $answer in" + '\n');
         menuText.append("    0) break ;;" + '\n');
         _options.forEach(option -> {
@@ -91,7 +93,7 @@ public class BashMenu extends Menu {
             if (option.name.get().equals("separator")) {
             } else {
                 menuText.append("if [ $1 = " + option.name.get() + " ]; then" + '\n');
-                menuText.append("   " + safeName(option.name.get()) + " ${@:2}\n");
+                menuText.append("   " + safeName(option.name.get()) + " \"${@:2}\"\n");
                 menuText.append("   exit $EXIT_CODE" + '\n');
                 menuText.append("fi" + '\n');
             }

@@ -60,7 +60,7 @@ public class ResourceUtil {
         Consumer<Path> pathConsumer = (resourcePath) -> {
             String fileName = resourcePath.toString().substring(resourcePath.toString().lastIndexOf('/') + 1);
             if (!Files.isDirectory(resourcePath) && fileName.matches(include)) {
-                if (replaceAll != null && replaceAll.trim().length() > 0) {
+                if (replaceAll != null && !replaceAll.trim().isEmpty()) {
                     fileName = fileName.replaceAll(replaceAll.split(",")[0], replaceAll.split(",")[1]);
                 }
                 Path destPath = Paths.get(dest.toString(), fileName);

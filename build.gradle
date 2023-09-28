@@ -16,7 +16,7 @@ apply plugin: 'java'
 group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
-version = '1.0.1-SNAPSHOT'
+version = '1.0.1'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -246,7 +246,7 @@ apply plugin: 'signing'
 
 ext {
     deployToMaven = System.getenv('SIGNINGKEY')
-    isSnapshot = true
+    isSnapshot = version.endsWith("SNAPSHOT")
 }
 
 if (deployToMaven) {

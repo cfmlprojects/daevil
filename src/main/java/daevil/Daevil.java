@@ -195,6 +195,7 @@ public class Daevil {
         ResourceUtil.copyResources(procrunFiles + "amd64/", Paths.get(dest.toString(), "amd64/"), "prunsrv.*", "prunsrv," + name.get());
         ResourceUtil.copyResources(procrunFiles, dest, "prunsrv.*", "prunsrv," + name.get());
         ResourceUtil.copyResources(procrunFiles, dest, "prunmgr.*", "prunmgr," + name.get() + 'w');
+        log.info("setting image icon if present");
         if (serviceImg.get() != null && !serviceImg.get().isEmpty()) {
             log.info("Loading image for windows service file: " + serviceImg.get());
             try {

@@ -26,7 +26,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -S
 
   release-notes:
     runs-on: ubuntu-20.04

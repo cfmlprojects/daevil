@@ -74,8 +74,10 @@ test {
     dependsOn 'cleanTest'
 
     // Show test results.
-    testLogging { events "passed", "skipped", "failed" }
-
+    //testLogging { events "passed", "skipped", "failed" }
+    testLogging { events "skipped", "failed" }
+    testLogging.exceptionFormat = 'full'
+    }
     // show standard out and standard error of the test JVM(s) on the console
     testLogging.showStandardStreams = true
 }

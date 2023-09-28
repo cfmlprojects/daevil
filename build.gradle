@@ -1,11 +1,11 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "org.asciidoctor.convert" version "1.5.7"
-    id "org.ajoberstar.grgit" version "5.0.0"
+    id "org.ajoberstar.grgit" version "5.2.0"
     id "org.ajoberstar.git-publish" version "3.0.0"
-    id('net.gradleutil.gradle-conf') version('1.1.9-SNAPSHOT')
+    id('net.gradleutil.gradle-conf') version('1.1.18')
 }
-def confGenVersion = '1.1.9-SNAPSHOT'
+def confGenVersion = '1.1.18'
 
 defaultTasks 'clean', 'shadow'
 
@@ -36,14 +36,30 @@ tasks.getByName('compileJava').configure {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 shadowJar {
     archiveClassifier.set null
     mergeServiceFiles()
     dependencies {
         exclude(dependency('org.slf4j:slf4j-api'))
+        exclude(dependency('com.google.guava:.*'))
     }
     minimize()
+    Set<File> jars = []
+    eachFile{
+        if(it.name.endsWith('.jar')){
+            jars.add(it.file as File)
+        }
+    }
     doLast {
+        jars.sort{it.length()}.each{ file ->
+            def formatStr = "%,10.2f"
+            logger.lifecycle("${String.format(formatStr, file.length() / 1024 / 1024)} Mb " + file.name)
+        }
         def jarFile = outputs.files.first() as File
         def formatStr = "%,10.2f"
         logger.lifecycle("Shadow jar:" + jarFile + "${String.format(formatStr, jarFile.length() / 1024)} Mb")
@@ -109,6 +125,7 @@ dependencies {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven { url "https://jitpack.io" }
 }
 
 task setupDocinfo() {
@@ -221,20 +238,80 @@ task docsPublish() {
 }
 
 
+apply plugin: 'signing'
+
+ext {
+    deployToMaven = System.getenv('SIGNINGKEY')
+    isSnapshot = true
+}
+
+if (deployToMaven) {
+    signing {
+        def signingKey = System.getenv('SIGNINGKEY')
+        def signingPassword = System.getenv('SIGNINGPASSWORD')
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign configurations.archives 
+    }
+} else {
+    task signArchives() {
+        description = "Add a  with signing info to enbable jar signing"
+        doFirst {
+            println "Signing is disabled without keys"
+        }
+    }
+}
+
 
 apply plugin: 'maven-publish'
+
+jar {
+    enabled(true)
+    archiveClassifier.set('core')
+    dependsOn(shadowJar)
+}
+artifacts { archives javadocJar, sourcesJar }
+
 publishing {
     repositories {
         maven {
-            url "$buildDir/maven"
+            if (project.isSnapshot) {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            }
+            credentials {
+                username = System.getenv('SIGNINGKEY')
+                password = System.getenv('SIGNINGKEY')
+            }
         }
     }
     publications {
-        daevil(MavenPublication) { publication ->
-            groupId project.group
-            artifactId 'daevil'
-            version project.version
-            from components.java
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+            artifact sourcesJar
+            artifact javadocJar
+            if (deployToMaven) {
+                // create the signed artifacts
+                project.tasks.signArchives.signatureFiles.each {
+                    artifact(it) {
+                        def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                        if (matcher.find()) {
+                            classifier = matcher.group(1)
+                        } else {
+                            classifier = null
+                        }
+                        extension = 'jar.asc'
+                    }
+                }
+            }
         }
     }
+}
+
+model {
+    tasks.generatePomFileForShadowPublication{
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishShadowPublicationToMavenLocal { dependsOn project.tasks.signArchives }
+    tasks.publishShadowPublicationToMavenRepository { dependsOn project.tasks.signArchives }
 }

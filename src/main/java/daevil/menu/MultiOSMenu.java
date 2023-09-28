@@ -107,9 +107,9 @@ public class MultiOSMenu extends Menu {
     /**
      * Just for testing resolvers
      *
-     * @param path
-     * @param osType
-     * @return
+     * @param path path
+     * @param osType os type
+     * @return result
      */
     public ProcessResult executeResolvers(Path path, OSType osType) {
         try {

@@ -76,7 +76,7 @@ class ExecuteTest extends AbstractWorkTest {
         bat.append("echo.done bruv\n");
         bat.write(resourcesTarget);
         ProcessResult processResult = OSType.WINDOWS.execute(resourcesTarget.toString(), null, null, 10, false);
-//        System.out.println(processResult.outputNoAnsi.get());
+        System.out.println(processResult.outputNoAnsi.get());
         assertTrue(processResult.outputNoAnsi.get().contains("hello there from powershell"));
     }
 

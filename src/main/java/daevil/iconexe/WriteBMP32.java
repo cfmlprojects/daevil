@@ -142,10 +142,10 @@ public class WriteBMP32 {
     }
 
     /**
-     * Creates an <tt>InfoHeader</tt> from the source image.
+     * Creates an <b>InfoHeader</b> from the source image.
      *
      * @param img the source image
-     * @return the resultant <tt>InfoHeader</tt> structure
+     * @return the resultant <b>InfoHeader</b> structure
      */
     public static InfoHeader createInfoHeader(BufferedImage img) {
         InfoHeader ret = new InfoHeader();
@@ -183,9 +183,9 @@ public class WriteBMP32 {
     }
 
     /**
-     * Writes the colour map resulting from the source <tt>IndexColorModel</tt>.
+     * Writes the colour map resulting from the source <b>IndexColorModel</b>.
      *
-     * @param icm the source <tt>IndexColorModel</tt>
+     * @param icm the source <b>IndexColorModel</b>
      * @param out the output to which the colour map will be written
      * @throws java.io.IOException if an error occurs
      */
@@ -508,8 +508,8 @@ public class WriteBMP32 {
      *
      * @param bits  the source byte
      * @param index the index of the bit to set
-     * @param bit   the value for the bit, which should be either <tt>0</tt> or
-     *              <tt>1</tt>.
+     * @param bit   the value for the bit, which should be either <b>0</b> or
+     *              <b>1</b>.
      * @return the   resultant byte
      */
     private static byte setBit(byte bits, int index, int bit) {
@@ -527,7 +527,7 @@ public class WriteBMP32 {
      * @param nibbles the source byte
      * @param index   the index of the nibble to set
      * @return the     value for the nibble, which should be in the range
-     *                <tt>0x0..0xF</tt>.
+     *                <b>0x0..0xF</b>.
      */
     private static byte setNibble(byte nibbles, int index, int nibble) {
         nibbles |= (nibble << ((1 - index) * 4));
@@ -540,8 +540,8 @@ public class WriteBMP32 {
      * count.
      *
      * @param sBitCount the bit count, which represents the colour depth
-     * @return the size of the colour map, in bytes if <tt>sBitCount</tt> is
-     * less than or equal to 8, otherwise <tt>0</tt> as colour maps are
+     * @return the size of the colour map, in bytes if <b>sBitCount</b> is
+     * less than or equal to 8, otherwise <b>0</b> as colour maps are
      * only used for bitmaps with a colour depth of 8 bits or less.
      */
     public static int getColorMapSize(short sBitCount) {
@@ -555,41 +555,33 @@ public class WriteBMP32 {
     public static class InfoHeader {
 
         /**
-         * The size of this <tt>InfoHeader</tt> structure in bytes.
+         * The size of this <b>InfoHeader</b> structure in bytes.
          */
         public int iSize;
         /**
          * The width in pixels of the bitmap represented by this
-         * <tt>InfoHeader</tt>.
+         * <b>InfoHeader</b>.
          */
         public int iWidth;
         /**
          * The height in pixels of the bitmap represented by this
-         * <tt>InfoHeader</tt>.
+         * <b>InfoHeader</b>.
          */
         public int iHeight;
         /**
-         * The number of planes, which should always be <tt>1</tt>.
+         * The number of planes, which should always be <b>1</b>.
          */
         public short sPlanes;
         /**
          * The bit count, which represents the colour depth (bits per pixel).
-         * This should be either <tt>1</tt>, <tt>4</tt>, <tt>8</tt>, <tt>24</tt>
-         * or <tt>32</tt>.
+         * This should be either <b>1</b>, <b>4</b>, <b>8</b>, <b>24</b>
+         * or <b>32</b>.
          */
         public short sBitCount;
-        /**
-         * The compression type, which should be one of the following:
-         * <ul>
-         * <li>{@link com.sun.imageio.plugins.bmp.BMPConstants#BI_RGB BI_RGB} - no compression</li>
-         * <li>{@link com.sun.imageio.plugins.bmp.BMPConstants#BI_RLE8 BI_RLE8} - 8-bit RLE compression</li>
-         * <li>{@link com.sun.imageio.plugins.bmp.BMPConstants#BI_RLE4 BI_RLE4} - 4-bit RLE compression</li>
-         * </ul>
-         */
         public int iCompression;
         /**
-         * The compressed size of the image in bytes, or <tt>0</tt> if
-         * <tt>iCompression</tt> is <tt>0</tt>.
+         * The compressed size of the image in bytes, or <b>0</b> if
+         * <b>iCompression</b> is <b>0</b>.
          */
         public int iImageSize;
         /**
@@ -605,7 +597,7 @@ public class WriteBMP32 {
          */
         public int iColorsUsed;
         /**
-         * Number of important colours (<tt>0</tt> = all).
+         * Number of important colours (<b>0</b> = all).
          */
         public int iColorsImportant;
 
@@ -616,7 +608,7 @@ public class WriteBMP32 {
         public int iNumColors;
 
         /**
-         * Creates an <tt>InfoHeader</tt> with default values.
+         * Creates an <b>InfoHeader</b> with default values.
          */
         public InfoHeader() {
             // Size of InfoHeader structure = 40
@@ -648,7 +640,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Creates a copy of the source <tt>InfoHeader</tt>.
+         * Creates a copy of the source <b>InfoHeader</b>.
          *
          * @param source the source to copy
          */
@@ -669,7 +661,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Writes the <tt>InfoHeader</tt> structure to output
+         * Writes the <b>InfoHeader</b> structure to output
          *
          * @param out the output to which the structure will be written
          * @throws java.io.IOException if an error occurs
@@ -707,17 +699,17 @@ public class WriteBMP32 {
     public static class LittleEndianOutputStream extends DataOutputStream {
 
         /**
-         * Creates a new instance of <tt>LittleEndianOutputStream</tt>, which
+         * Creates a new instance of <b>LittleEndianOutputStream</b>, which
          * will write to the specified target.
          *
-         * @param out the target <tt>OutputStream</tt>
+         * @param out the target <b>OutputStream</b>
          */
         public LittleEndianOutputStream(java.io.OutputStream out) {
             super(out);
         }
 
         /**
-         * Reverses the byte order of the source <tt>short</tt> value
+         * Reverses the byte order of the source <b>short</b> value
          *
          * @param value the source value
          * @return the converted value
@@ -727,7 +719,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Reverses the byte order of the source <tt>int</tt> value
+         * Reverses the byte order of the source <b>int</b> value
          *
          * @param value the source value
          * @return the converted value
@@ -739,7 +731,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Reverses the byte order of the source <tt>long</tt> value
+         * Reverses the byte order of the source <b>long</b> value
          *
          * @param value the source value
          * @return the converted value
@@ -756,7 +748,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Reverses the byte order of the source <tt>float</tt> value
+         * Reverses the byte order of the source <b>float</b> value
          *
          * @param value the source value
          * @return the converted value
@@ -768,7 +760,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Reverses the byte order of the source <tt>double</tt> value
+         * Reverses the byte order of the source <b>double</b> value
          *
          * @param value the source value
          * @return the converted value
@@ -821,7 +813,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Writes a little-endian <tt>short</tt> value
+         * Writes a little-endian <b>short</b> value
          *
          * @param value the source value to convert
          * @throws java.io.IOException if an error occurs
@@ -832,7 +824,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Writes a little-endian <tt>int</tt> value
+         * Writes a little-endian <b>int</b> value
          *
          * @param value the source value to convert
          * @throws java.io.IOException if an error occurs
@@ -843,7 +835,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Writes a little-endian <tt>float</tt> value
+         * Writes a little-endian <b>float</b> value
          *
          * @param value the source value to convert
          * @throws java.io.IOException if an error occurs
@@ -854,7 +846,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Writes a little-endian <tt>long</tt> value
+         * Writes a little-endian <b>long</b> value
          *
          * @param value the source value to convert
          * @throws java.io.IOException if an error occurs
@@ -865,7 +857,7 @@ public class WriteBMP32 {
         }
 
         /**
-         * Writes a little-endian <tt>double</tt> value
+         * Writes a little-endian <b>double</b> value
          *
          * @param value the source value to convert
          * @throws java.io.IOException if an error occurs
@@ -875,9 +867,6 @@ public class WriteBMP32 {
             super.writeDouble(value);
         }
 
-        /**
-         * @since 0.6
-         */
         public void writeUnsignedInt(long value) throws IOException {
             int i1 = (int) (value >> 24);
             int i2 = (int) ((value >> 16) & 0xFF);
@@ -890,9 +879,6 @@ public class WriteBMP32 {
             write(i4);
         }
 
-        /**
-         * @since 0.6
-         */
         public void writeUnsignedIntLE(long value) throws IOException {
             int i1 = (int) (value >> 24);
             int i2 = (int) ((value >> 16) & 0xFF);

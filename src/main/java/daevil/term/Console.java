@@ -35,7 +35,7 @@ public class Console {
 
         processBuilder.setEnvironment(env);
 
-        String wincmdline = "wine " + String.join(" ", executeThis);
+        String wincmdline = "wine " + (executeThis.contains(".bat") ? "cmd.exe /c ":"") + String.join(" ", executeThis);
 
         String[] cmd = {
                 "/bin/sh", "-c", wincmdline

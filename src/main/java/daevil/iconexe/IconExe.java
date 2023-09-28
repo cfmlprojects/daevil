@@ -79,6 +79,9 @@ public class IconExe {
      * <p>
      * Note 4. This function modifies the content of the executable program and may cause
      * its corruption.
+     * @param args woo
+     * @throws Exception www
+     * @throws java.io.IOException eee
      */
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
@@ -300,6 +303,7 @@ public class IconExe {
      * @param program the Windows executable e.g c:/eclipse/eclipse.exe
      * @param imgFile png file (256x256) to create icons from
      * @return icons matching format for those in the executable
+     * @throws IOException io error
      */
     public static List<ImageData> exeIconsFromPng(String program, Object imgFile) throws IOException {
         RandomAccessFile raf = new RandomAccessFile(program, "rw"); //$NON-NLS-1$

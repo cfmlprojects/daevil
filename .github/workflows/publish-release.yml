@@ -22,10 +22,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.1
         env:
-          mavenCentralUsername: ${{ secrets.MAVENCENTRALUSERNAME }}
-          mavenCentralPassword: ${{ secrets.MAVENCENTRALPASSWORD }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNINGKEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNINGPASSWORD }}
+          MAVENCENTRALUSERNAME: ${{ secrets.MAVENCENTRALUSERNAME }}
+          MAVENCENTRALPASSWORD: ${{ secrets.MAVENCENTRALPASSWORD }}
+          SIGNINGKEY: ${{ secrets.SIGNINGKEY }}
+          SIGNINGPASSWORD: ${{ secrets.SIGNINGPASSWORD }}
 
       - name: Execute Gradle build
         run: ./gradlew publishShadowPublicationToMavenRepository

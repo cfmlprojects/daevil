@@ -19,17 +19,13 @@ jobs:
           distribution: temurin
           java-version: 11
             
-      - uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
         env:
           mavenCentralUsername: ${{ secrets.MAVENCENTRALUSERNAME }}
           mavenCentralPassword: ${{ secrets.MAVENCENTRALPASSWORD }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNINGPASSWORD }}
 
-        # The GITHUB_REF tag comes in the format 'refs/tags/xxx'.
-        # So if we split on '/' and take the 3rd value, we can get the release name.
-        run: |
-          TAG_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
-          echo "New version: ${TAG_VERSION}"
-          echo "Github username: ${GITHUB_ACTOR}"
-          ./gradlew publishShadowPublicationToMavenRepository
+      - name: Execute Gradle build
+        run: ./gradlew publishShadowPublicationToMavenRepository

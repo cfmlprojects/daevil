@@ -14,6 +14,8 @@ ifndef::env-github[]
 :toc: left
 endif::[]
 
+image::https://github.com/cfmlprojects/daevil/workflows/Build%20master%20branch/badge.svg[link=https://github.com/cfmlprojects/daevil/actions?query=workflow%3A%22Build+master+branch%22, alt=Badge]
+
 This is just a little deal to generate scripts for installing things as daemons in *nix and Windows.
 
 ifndef::env-github[]

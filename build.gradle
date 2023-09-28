@@ -249,8 +249,25 @@ ext {
     isSnapshot = version.endsWith("SNAPSHOT")
 }
 
+confConfig{
+    conf.set file(System.getProperty("user.home") + '.cfdistrorc')
+    generateBean.set true
+    silent.set false
+    outputDirectory.set new File(rootDir,'src/dsl')
+    rootClassName.set 'con'
+   // schemaFile.set file('config.schema.json')
+}
+
+
 if (deployToMaven) {
     signing {
+        //ext['signing.keyId'] = project.config.gpg.cfmlprojects.signkeyid
+        //ext['signing.password'] = project.config.gpg.cfmlprojects.pass
+        //ext['signing.secretKeyRingFile'] = project.config.gpg.cfmlprojects.secring
+        //username project.config.sonatype.cfmlprojects.user
+        //password project.config.sonatype.cfmlprojects.pass
+
+        
         def signingKey = System.getenv('SIGNINGKEY')
         def signingPassword = System.getenv('SIGNINGPASSWORD')
         useInMemoryPgpKeys(signingKey, signingPassword)

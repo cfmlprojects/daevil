@@ -195,7 +195,7 @@ public class Daevil {
         ResourceUtil.copyResources(procrunFiles + "amd64/", Paths.get(dest.toString(), "amd64/"), "prunsrv.*", "prunsrv," + name.get());
         ResourceUtil.copyResources(procrunFiles, dest, "prunsrv.*", "prunsrv," + name.get());
         ResourceUtil.copyResources(procrunFiles, dest, "prunmgr.*", "prunmgr," + name.get() + 'w');
-        if (serviceImg.get() != null && !serviceImg.get().equals("")) {
+        if (serviceImg.get() != null && !serviceImg.get().isEmpty()) {
             log.info("Loading image for windows service file: " + serviceImg.get());
             try {
                 IconExe.setIcon(new File(dest.toFile(), name.get() + ".exe"), serviceImg.get());
@@ -207,6 +207,7 @@ public class Daevil {
         } else {
             log.info("No image for windows service file.");
         }
+        log.info("done with service scripts");
     }
 
     static Path getJarPath() {

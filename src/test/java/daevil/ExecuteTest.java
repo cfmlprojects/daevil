@@ -7,6 +7,8 @@ import daevil.menu.BatchFileBuilder;
 import daevil.term.Gobbler;
 import daevil.term.ProcessResult;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,6 +42,7 @@ class ExecuteTest extends AbstractWorkTest {
     }
 
     @Test
+    @EnabledOnOs({OS.WINDOWS})
     void testTtyWinePs() throws IOException, InterruptedException {
 
         Map<String, String> env = new HashMap<>();
@@ -65,6 +68,7 @@ class ExecuteTest extends AbstractWorkTest {
     }
 
     @Test
+    @EnabledOnOs({OS.WINDOWS})
     void powershellEcho() {
         Path resourcesTarget = Paths.get(workDir + "/functionTest.bat").toAbsolutePath();
         BatchFileBuilder bat = new BatchFileBuilder(false);

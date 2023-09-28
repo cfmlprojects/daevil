@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import daevil.menu.BatchFileBuilder;
 import daevil.term.ProcessResult;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,6 +22,7 @@ class ResolverFunctionTest extends AbstractWorkTest {
 
 
     @Test
+    @EnabledOnOs({OS.WINDOWS})
     void md5File() throws IOException {
         Path resourcesTarget = Paths.get(workDir + "/functionTest.bat").toAbsolutePath();
         String fileName = "file.txt";
@@ -44,6 +47,7 @@ class ResolverFunctionTest extends AbstractWorkTest {
     }
 
     @Test
+    @EnabledOnOs({OS.WINDOWS})
     void unzipFile() throws IOException {
         Path resourcesTarget = Paths.get(workDir + "/functionTest.bat").toAbsolutePath();
         String filepath = Paths.get("src/test/resources/md5/file.zip").toAbsolutePath().toString();

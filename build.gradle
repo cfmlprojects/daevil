@@ -16,7 +16,8 @@ apply plugin: 'java'
 group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
-version = '1.0.1'
+
+version = '1.0.2'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -243,7 +244,7 @@ task docsPublish() {
 
 
 confConfig{
-    conf.set file(System.getProperty("user.home") + '/.cfdistrorc.propertiesss')
+    conf.set file(System.getProperty("user.home") + '/.cfdistrorc.properties')
     silent.set true
 }
 
@@ -253,7 +254,6 @@ ext {
     deployToMaven = System.getenv('SIGNINGKEY') ?: config?.gpg?.cfmlprojects?.signkeyid
     isSnapshot = version.endsWith("SNAPSHOT")
 }
-
 
 if (deployToMaven) {
     signing {
@@ -270,7 +270,7 @@ if (deployToMaven) {
         }
     }
 }
-
+signArchives.group = 'publishing'
 
 apply plugin: 'maven-publish'
 
@@ -294,6 +294,7 @@ publishing {
                     username = System.getenv('MAVENCENTRALUSERNAME') ?: config.sonatype.cfmlprojects.user
                     password = System.getenv('MAVENCENTRALPASSWORD') ?: config.sonatype.cfmlprojects.pass
                 }
+                println credentials
             }
         }
     }
@@ -312,7 +313,6 @@ publishing {
                         } else {
                             classifier = null
                         }
-                        extension = 'jar.asc'
                     }
                 }
             }

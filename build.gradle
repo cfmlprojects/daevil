@@ -344,5 +344,5 @@ tasks.withType(Sign) { t ->
 }
 
 def shouldSkipSigning() {
-    return (System.getenv('SIGNINGKEY') ?: config?.gpg?.cfmlprojects?.signkeyid)?.isEmpty()
+    return !(System.getenv('SIGNINGKEY') ?: config?.gpg?.cfmlprojects?.signkeyid)?.isEmpty()
 }

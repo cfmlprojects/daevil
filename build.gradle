@@ -35,7 +35,7 @@ def jteDir = layout.buildDirectory.dir('jteFiles')
 
 tasks.getByName('compileJava').configure {
     sourceSets.main.java.srcDirs += jteDir
-    doFirst{
+    doFirst {
         net.gradleutil.gen.Generator.generate(file('src/main/jte').toPath(), jteDir.get().asFile.toPath(),
                 net.gradleutil.gen.Generator.defaultOptions().packageName('daevil'))
     }
@@ -128,9 +128,9 @@ task setupDocinfo() {
     }
     doFirst {
         docinfodir.mkdirs()
-//        def css = 'https://raw.githubusercontent.com/darshandsoni/asciidoctor-skins/gh-pages/css/boot-superhero.css'.toURL().text
+        //        def css = 'https://raw.githubusercontent.com/darshandsoni/asciidoctor-skins/gh-pages/css/boot-superhero.css'.toURL().text
         def css = 'https://raw.githubusercontent.com/spring-projects/spring-framework/master/src/docs/asciidoc/stylesheets/asciidoctor-spring.css'.toURL().text
-//        css += 'https://raw.githubusercontent.com/spring-projects/spring-framework/master/src/docs/asciidoc/stylesheets/main.css'.toURL().text
+        //        css += 'https://raw.githubusercontent.com/spring-projects/spring-framework/master/src/docs/asciidoc/stylesheets/main.css'.toURL().text
         file(docinfodir.path + "/docinfo.html").text = """
             <style>
               ${css}
@@ -232,7 +232,7 @@ task docsPublish() {
 }
 
 
-confConfig{
+confConfig {
     conf.set file(System.getProperty("user.home") + '/.cfdistrorc.properties')
     silent.set true
 }
@@ -310,11 +310,14 @@ publishing {
 }
 
 nexusPublishing {
-    clientTimeout = java.time.Duration.ofMinutes(2) // we've seen extremely long delays in creating repositories
+    clientTimeout = java.time.Duration.ofMinutes(2)
+    // we've seen extremely long delays in creating repositories
     repositories {
         sonatype {
-            username = project.config.sonatype.cfmlprojects.user
-            password = project.config.sonatype.cfmlprojects.pass
+            if (!shouldSkipSigning()) {
+                username = project.config.sonatype.cfmlprojects.user
+                password = project.config.sonatype.cfmlprojects.pass
+            }
         }
     }
 }

@@ -322,17 +322,12 @@ nexusPublishing {
     }
 }
 
-if (!shouldSkipSigning()) {
+if (shouldSkipSigning()) {
+    println "Signing is disabled without keys"
+} else {
     ext['signing.keyId'] = project.config.gpg.cfmlprojects.signkeyid
     ext['signing.password'] = project.config.gpg.cfmlprojects.pass
     ext['signing.secretKeyRingFile'] = (project.config.gpg.cfmlprojects.secring).replace('${user.home}', System.getProperty("user.home"))
-} else {
-    task signArchives() {
-        description = "Add a ${ext.cfdistrorcFile} with signing info to enbable jar signing"
-        doFirst {
-            println "Signing is disabled without keys"
-        }
-    }
 }
 
 signing {
@@ -344,5 +339,5 @@ tasks.withType(Sign) { t ->
 }
 
 def shouldSkipSigning() {
-    return !(System.getenv('SIGNINGKEY') ?: config?.gpg?.cfmlprojects?.signkeyid)?.isEmpty()
+    return System.getenv('SIGNINGKEY') ? config?.gpg?.cfmlprojects?.signkeyid : false
 }

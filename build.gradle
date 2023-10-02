@@ -20,7 +20,7 @@ group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
 
-version = '1.0.5'
+version = '1.0.6'
 
 sourceCompatibility = 11
 targetCompatibility = 11

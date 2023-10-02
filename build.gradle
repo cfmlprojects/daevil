@@ -20,7 +20,7 @@ group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
 
-version = '1.0.6'
+version = '1.0.7'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -52,7 +52,9 @@ shadowJar {
         exclude(dependency('org.slf4j:slf4j-api'))
         exclude(dependency('com.google.guava:.*'))
     }
-    minimize()
+    minimize {
+        exclude(dependency('net.gradleutil:.*:.*'))
+    }
 }
 
 test {

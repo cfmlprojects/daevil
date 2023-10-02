@@ -27,7 +27,7 @@ jobs:
           MAVENCENTRALPASSWORD: ${{ secrets.MAVENCENTRALPASSWORD }}
           SIGNINGKEY: ${{ secrets.SIGNINGKEY }}
           SIGNINGPASSWORD: ${{ secrets.SIGNINGPASSWORD }}
-        run: ./gradlew build
+        run: ./gradlew publishToSonatype closeAndReleaseStagingRepository
 
   release-notes:
     runs-on: ubuntu-20.04

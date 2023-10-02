@@ -28,4 +28,4 @@ jobs:
           MAVENCENTRALPASSWORD: ${{ secrets.MAVENCENTRALPASSWORD }}
           SIGNINGKEY: ${{ secrets.SIGNINGKEY }}
           SIGNINGPASSWORD: ${{ secrets.SIGNINGPASSWORD }}
-        run: ./gradlew publishToSonatype closeAndReleaseStagingRepository
+        run: ./gradlew build

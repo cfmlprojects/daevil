@@ -325,9 +325,11 @@ nexusPublishing {
 if (shouldSkipSigning()) {
     println "Signing is disabled without keys"
 } else {
-    ext['signing.keyId'] = project.config.gpg.cfmlprojects.signkeyid
-    ext['signing.password'] = project.config.gpg.cfmlprojects.pass
-    ext['signing.secretKeyRingFile'] = (project.config.gpg.cfmlprojects.secring).replace('${user.home}', System.getProperty("user.home"))
+    if(config?.gpg?.cfmlprojects?.signkeyid){
+        ext['signing.keyId'] = project.config.gpg.cfmlprojects.signkeyid
+        ext['signing.password'] = project.config.gpg.cfmlprojects.pass
+        ext['signing.secretKeyRingFile'] = (project.config.gpg.cfmlprojects.secring).replace('${user.home}', System.getProperty("user.home"))
+    }
 }
 
 signing {

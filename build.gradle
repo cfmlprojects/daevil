@@ -332,8 +332,18 @@ if (shouldSkipSigning()) {
     }
 }
 
-signing {
-    sign publishing.publications.shadow
+if (shouldSkipSigning()) {
+    println "Signing is disabled without keys"
+} else {
+    signing {
+        def signingKey = System.getenv('SIGNINGKEY') ?: config.gpg.cfmlprojects.key
+        def signingPassword = System.getenv('SIGNINGPASSWORD') ?: config.gpg.cfmlprojects.pass
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        publishing.publications.each{
+            println it.name
+        }
+        sign publishing.publications.shadow
+    }
 }
 
 tasks.withType(Sign) { t ->

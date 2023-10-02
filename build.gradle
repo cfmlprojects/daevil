@@ -315,8 +315,8 @@ nexusPublishing {
     repositories {
         sonatype {
             if (!shouldSkipSigning()) {
-                username = project.config.sonatype.cfmlprojects.user
-                password = project.config.sonatype.cfmlprojects.pass
+                username = System.getenv('MAVENCENTRALUSERNAME') ?: config.sonatype.cfmlprojects.user
+                password = System.getenv('MAVENCENTRALPASSWORD') ?: config.sonatype.cfmlprojects.pass
             }
         }
     }

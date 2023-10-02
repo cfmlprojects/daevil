@@ -4,8 +4,7 @@ plugins {
     id('net.gradleutil.gradle-conf') version('1.1.18')
     id "org.ajoberstar.grgit" version "5.2.0"
     id "org.ajoberstar.git-publish" version "3.0.0"
-    id "de.marcphilipp.nexus-publish" version "0.3.0"
-    id "io.codearte.nexus-staging" version "0.21.2"
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0-rc-1"
     id 'idea'
     id 'signing'
 }
@@ -21,7 +20,7 @@ group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
 
-version = '1.0.3'
+version = '1.0.4-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -258,11 +257,6 @@ idea {
     }
 }
 
-nexusStaging {
-    packageGroup = "org.cfmlprojects"
-    numberOfRetries = 40 // we've seen extremely long delays in closing repositories
-}
-
 
 publishing {
     publications {
@@ -310,8 +304,13 @@ publishing {
 }
 
 nexusPublishing {
+    packageGroup = "org.cfmlprojects"
+    connectTimeout = Duration.ofSeconds(60)
     clientTimeout = java.time.Duration.ofMinutes(2)
-    // we've seen extremely long delays in creating repositories
+    transitionCheckOptions {
+        maxRetries.set(40)
+        delayBetween.set(java.time.Duration.ofMillis(3000))
+    }
     repositories {
         sonatype {
             if (!shouldSkipSigning()) {

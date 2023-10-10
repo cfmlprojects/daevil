@@ -2,7 +2,7 @@ package daevil;
 
 import daevil.term.Console;
 import daevil.term.ProcessResult;
-import org.jsoftbiz.utils.OS;
+import static daevil.OS.OS;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -28,9 +28,8 @@ public enum OSType {
     }
 
     public static OSType host() {
-        OS os = OS.getOs();
 
-        if (os.getName().contains("Windows"))
+        if (OS.getName().contains("Windows"))
             return OSType.WINDOWS;
 
         if (Files.exists(Paths.get("/Library/LaunchDaemons/")))
@@ -42,10 +41,10 @@ public enum OSType {
         if (Files.exists(Paths.get("/etc/init.d/functions")))
             return OSType.NIX_RHELISH;
 
-        if (os.getName().contains("nix"))
+        if (OS.getName().contains("nix"))
             return OSType.NIX;
 
-        throw new IllegalArgumentException("Unknown os type: " + os.getPlatformName());
+        throw new IllegalArgumentException("Unknown os type: " + OS.getPlatformName());
     }
 
     public String type() {

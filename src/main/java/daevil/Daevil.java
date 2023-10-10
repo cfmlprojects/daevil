@@ -10,8 +10,6 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.TemplateOutput;
 import gg.jte.output.StringOutput;
-import net.gradleutil.gen.Generator;
-import org.jsoftbiz.utils.OS;
 
 import java.io.File;
 import java.io.IOException;

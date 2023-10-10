@@ -1,6 +1,6 @@
 @param Object... args
-!{String url = args[0].toString()}
-!{String file = args[1].toString()}
+!{String url = args[0].toString();}
+!{String file = args[1].toString();}
 function downloadFile($url, $targetFile) {
     $WebClient = New-Object System.Net.WebClient
     $WebClient.DownloadFile($url,$targetFile)

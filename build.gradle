@@ -1,14 +1,14 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "org.asciidoctor.convert" version "1.5.7"
-    id('net.gradleutil.gradle-conf') version('1.1.18')
+    id('net.gradleutil.gradle-conf') 
     id "org.ajoberstar.grgit" version "5.2.0"
     id "org.ajoberstar.git-publish" version "3.0.0"
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0-rc-1"
     id 'idea'
     id 'signing'
 }
-def confGenVersion = '1.1.18'
+def confGenVersion = '1.2.0'
 
 defaultTasks 'clean', 'shadow'
 
@@ -20,7 +20,7 @@ group = 'org.cfmlprojects'
 description = 'Daevil Gradle build script'
 archivesBaseName = 'daevil'
 
-version = '1.0.8'
+version = '1.0.9'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -36,7 +36,7 @@ tasks.getByName('compileJava').configure {
     sourceSets.main.java.srcDirs += jteDir
     doFirst {
         net.gradleutil.gen.Generator.generate(file('src/main/jte').toPath(), jteDir.get().asFile.toPath(),
-                net.gradleutil.gen.Generator.defaultOptions().packageName('daevil'))
+                net.gradleutil.gen.Generator.generatorOptions().packageName('daevil'))
     }
 }
 

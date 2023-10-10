@@ -1,6 +1,6 @@
 @param Object... args
-!{String path = args[0].toString() }
-!{String md5File = args[1].toString() }
+!{String path = args[0].toString(); }
+!{String md5File = args[1].toString(); }
     $path = '${path}'
     $md5File = '${md5File}'
     $fullPath = Resolve-Path $path

@@ -1,6 +1,6 @@
 @param Object... args
-!{String zipFile = args[0].toString() }
-!{String unzipToDir = args[1].toString() }
+!{String zipFile = args[0].toString();}
+!{String unzipToDir = args[1].toString(); }
 function unzip($zipFile, $unzipToDir) {
     Write-Host "Beginning Unzipping $zipFile to $unzipToDir"
     $Shell = New-Object -com Shell.Application
